@@ -1,0 +1,105 @@
+spring:
+  #（1）数据源
+  datasource:
+    druid:
+      url: jdbc:mysql://localhost:3306/activiti_data?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=true
+      driver-class-name: com.mysql.jdbc.Driver
+      username: root
+      password: 123
+      #初始化时建立物理连接的个数
+      initial-size: 10
+      #最大连接池数量
+      max-active: 20
+      #Oracle打开。mysql关闭
+      pool-prepared-statements: false
+      #判断是不是查询语句
+      validation-query: SELECT 1
+      #查询超时时间
+      validation-query-timeout: 500
+      #开启防火墙、监控、日志插件
+      filters: stat,wall
+      #开启监控
+      stat-view-servlet:
+        enabled: true
+        #访问地址规则
+        url-pattern: /druid/*
+        #登录用户名
+        login-username: admin
+        #登录密码
+        login-password: admin
+        #是否允许清空统计数据
+        reset-enable: true
+      #其他检测功能不开，损耗性能
+      test-on-borrow: false
+      test-on-return: false
+      #开启查询验证超时检测
+      test-while-idle: true
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+---
+spring:
+  #（3）消息中间件
+  activemq:
+    # 端口
+    broker-url: tcp://127.0.0.1:61616
+    # 默认代理URL是否应该在内存中。如果指定了显式代理，则忽略此值。
+    close-timeout: 15s
+    # 默认代理URL是否应该在内存中。如果指定了显式代理，则忽略此值。
+    in-memory: true
+    # 是否在回滚回滚消息之前停止消息传递。这意味着当启用此命令时，消息顺序不会被保留。
+    non-blocking-redelivery: false
+    #用户名
+    user: admin
+    #密码
+    password: admin
+    #默认情况下activemq提供的是queue模式，若要使用topic模式需要配置下面配置
+  jms:
+    pub-sub-domain: true
+---
+#（4）Redis缓存
+spring :
+  redis:
+    database: 0
+    # Redis服务器地址
+    host: 127.0.0.1
+    port: 6379
+    password: 123
+    #默认为0，最好修改到200以上
+    timeout: 300ms
+    lettuce:
+      pool:
+        # 连接池最大连接数（使用负值表示没有限制） 默认 8
+        max-active: 8
+        # 连接池最大阻塞等待时间（使用负值表示没有限制） 默认 -1
+        max-wait: -1ms
+        # 连接池中的最大空闲连接 默认 8
+        max-idle: 8
+        # 连接池中的最小空闲连接 默认 0
+        min-idle: 0
+---
+spring:
+  thymeleaf:
+    cache: false
+#设置端口号
+server:
+  port: 8082
+#分页
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+#Mybatis设置
+mybatis:
+  mapper-locations: classpath:mappers/*.xml
+  type-aliases-package: com.accq.*.model
+---
+spring:
+  #（2）文件上传
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 100MB
+      max-request-size: 100MB
+  #设置绝对路径，避免打包后找不到问题
+file:
+  static-access-path: /upload/**
+  upload-file-folder: d://apk//upload
